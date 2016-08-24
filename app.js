@@ -25,6 +25,7 @@ app.get('/verse/:query', function(req, res) {
             && body['response']['search']['result'] != undefined
             && body['response']['search']['result']['passages'] != undefined
             && body['response']['search']['result']['passages'].length > 0) {
+            console.log(body['response']['search']['result']['passages'].length);
 
             var text = body['response']['search']['result']['passages'][0]['text'].replace(/h3/g, 'b');
             var ref = body['response']['search']['result']['passages'][0]['display'];

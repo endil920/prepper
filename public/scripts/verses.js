@@ -1,3 +1,7 @@
+var React = require('react');
+var PassageStore = require('./Stores');
+var Actions = require('./Actions');
+
 var InputBox = React.createClass({
     getInitialState: function() {
                          return {value: "Please input verses/passages here. Separate by comma"};
@@ -11,7 +15,6 @@ var InputBox = React.createClass({
     onKeyPress: function(event) {
                     if (event.key === 'Enter') {
                         showVerse(this.state.value);
-                        console.log('canoli');
                     }
                 },
     render: function() {
@@ -28,14 +31,21 @@ var InputBox = React.createClass({
 });
 var Verses = React.createClass({
     getInitialState: function() {
-                         return {data: ''};
+                         return {passage: ''};
                      },
+    stripText: function() {
+                   this.state.data = this.state.data.replace(/\<sup.*\/sup\>/g, '');
+               },
     componentDidMount: function() {
+                           var that = this;
+                           PassageStore.listen(function(state) {
+                            that.setState({passage: state.passages[that.props.index]});
+                           });
                            $.ajax({
                                url: this.props.url,
                            dataType: 'json',
                            success: function(data) {
-                               this.setState({data: data});
+                               Actions.initializePassage(data, that.props.index);
                            }.bind(this),
                            error: function(xhr, status, err) {
                                       console.error(this.props.url, status, err.toString());
@@ -45,7 +55,7 @@ var Verses = React.createClass({
     render: function() {
                 return (
                     <div className="verse">
-                    <div dangerouslySetInnerHTML={{__html: this.state.data}} />
+                    <div dangerouslySetInnerHTML={{__html: this.state.passage}}/>
                     </div>
                     );
             }
@@ -53,11 +63,10 @@ var Verses = React.createClass({
 ReactDOM.render(<InputBox/>, document.getElementById('input'));
 function showVerse(input) {
     $("#output").empty();
-    console.log('attempting to show');
-    console.log(input);
+    Actions.clear();
     let verses = input.split(/[,\n;]+/);
     let verseComponents = verses.map(function(vrs, i) {
-        return <div key={i}><Verses url={"/verse/" + vrs}/></div>
+        return <div key={i}><Verses url={"/verse/" + vrs} index={i}/></div>
     });
     ReactDOM.render(<div>{verseComponents}</div>, document.getElementById('output'));
 }
