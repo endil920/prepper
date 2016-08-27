@@ -66,18 +66,21 @@
 	        if (event.key === 'Enter') {
 	            showVerse(this.state.value);
 	        }
-	        if (event.key === '9') {
-	            Actions.toggleNotations();
-	        }
 	    },
 	    render: function render() {
-	        return React.createElement('textarea', {
-	            type: 'text',
-	            value: this.state.value,
-	            onChange: this.handleChange,
-	            onFocus: this.onFocus,
-	            onKeyPress: this.onKeyPress
-	        });
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement('textarea', {
+	                type: 'text',
+	                value: this.state.value,
+	                onChange: this.handleChange,
+	                onFocus: this.onFocus,
+	                onKeyPress: this.onKeyPress
+	            }),
+	            React.createElement('br', null),
+	            'Press Enter to Display Verse Text'
+	        );
 	    }
 	});
 	var ToggleNotationsButton = React.createClass({
@@ -95,6 +98,19 @@
 	    }
 
 	});
+	var CopyButton = React.createClass({
+	    displayName: 'CopyButton',
+
+	    render: function render() {
+	        return React.createElement(
+	            'button',
+	            { className: 'cbutton', type: 'button', 'data-clipboard-target': '#verses' },
+	            'Copy'
+	        );
+	    }
+
+	});
+
 	var Verses = React.createClass({
 	    displayName: 'Verses',
 
@@ -107,7 +123,8 @@
 	    componentDidMount: function componentDidMount() {
 	        var that = this;
 	        PassageStore.listen(function (state) {
-	            console.log("i heaar");
+	            console.log("i heaar" + that.props.index);
+
 	            that.setState({ passage: state.passages[that.props.index] });
 	        });
 	        $.ajax({
@@ -132,7 +149,7 @@
 
 	ReactDOM.render(React.createElement(InputBox, null), document.getElementById('input'));
 	function showVerse(input) {
-	    $("#output").empty();
+	    $("#outputContainer").empty();
 	    Actions.clear();
 	    var verses = input.split(/[,\n;]+/);
 	    var verseComponents = verses.map(function (vrs, i) {
@@ -146,12 +163,18 @@
 	        'div',
 	        null,
 	        React.createElement(ToggleNotationsButton, null),
+	        React.createElement(CopyButton, null),
 	        React.createElement(
 	            'div',
-	            { id: 'verses' },
-	            verseComponents
+	            { id: 'output' },
+	            React.createElement(
+	                'div',
+	                { id: 'verses' },
+	                verseComponents
+	            )
 	        )
-	    ), document.getElementById('output'));
+	    ), document.getElementById('outputContainer'));
+	    new Clipboard('.cbutton');
 	}
 
 /***/ },

@@ -16,12 +16,10 @@ var InputBox = React.createClass({
                     if (event.key === 'Enter') {
                         showVerse(this.state.value);
                     }
-                    if (event.key === '9') {
-                        Actions.toggleNotations();
-                    }
                 },
     render: function() {
                 return (
+                    <div>
                     <textarea
                     type="text"
                     value={this.state.value}
@@ -29,6 +27,9 @@ var InputBox = React.createClass({
                     onFocus={this.onFocus}
                     onKeyPress={this.onKeyPress}
                     />
+                    <br/>
+                    Press Enter to Display Verse Text
+                    </div>
                     );
             }
 });
@@ -43,6 +44,15 @@ var ToggleNotationsButton = React.createClass({
             }
 
 });
+var CopyButton = React.createClass({
+    render: function() {
+                return (
+                    <button className="cbutton" type="button" data-clipboard-target="#verses">Copy</button>
+                    );
+            }
+
+});
+
 var Verses = React.createClass({
     getInitialState: function() {
                          return {passage: ''};
@@ -53,7 +63,8 @@ var Verses = React.createClass({
     componentDidMount: function() {
                            var that = this;
                            PassageStore.listen(function(state) {
-                               console.log("i heaar");
+                               console.log("i heaar" + that.props.index);
+
                             that.setState({passage: state.passages[that.props.index]});
                            });
                            $.ajax({
@@ -79,11 +90,15 @@ var Verses = React.createClass({
 
 ReactDOM.render(<InputBox/>, document.getElementById('input'));
 function showVerse(input) {
-    $("#output").empty();
+    $("#outputContainer").empty();
     Actions.clear();
     let verses = input.split(/[,\n;]+/);
     let verseComponents = verses.map(function(vrs, i) {
         return <div key={i}><Verses url={"/verse/" + vrs} index={i}/></div>
     });
-    ReactDOM.render(<div><ToggleNotationsButton/><div id="verses">{verseComponents}</div></div>, document.getElementById('output'));
+    ReactDOM.render(<div><ToggleNotationsButton/>
+            <CopyButton/>
+            <div id="output">
+            <div id="verses">{verseComponents}</div></div></div>, document.getElementById('outputContainer'));
+    new Clipboard('.cbutton');
 }
