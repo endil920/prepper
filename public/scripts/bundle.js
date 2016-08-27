@@ -66,6 +66,9 @@
 	        if (event.key === 'Enter') {
 	            showVerse(this.state.value);
 	        }
+	        if (event.key === '9') {
+	            Actions.toggleNotations();
+	        }
 	    },
 	    render: function render() {
 	        return React.createElement('textarea', {
@@ -76,6 +79,21 @@
 	            onKeyPress: this.onKeyPress
 	        });
 	    }
+	});
+	var ToggleNotationsButton = React.createClass({
+	    displayName: 'ToggleNotationsButton',
+
+	    onClick: function onClick() {
+	        Actions.toggleNotations();
+	    },
+	    render: function render() {
+	        return React.createElement(
+	            'button',
+	            { type: 'button', onClick: this.onClick },
+	            'Toggle Notations'
+	        );
+	    }
+
 	});
 	var Verses = React.createClass({
 	    displayName: 'Verses',
@@ -89,6 +107,7 @@
 	    componentDidMount: function componentDidMount() {
 	        var that = this;
 	        PassageStore.listen(function (state) {
+	            console.log("i heaar");
 	            that.setState({ passage: state.passages[that.props.index] });
 	        });
 	        $.ajax({
@@ -110,6 +129,7 @@
 	        );
 	    }
 	});
+
 	ReactDOM.render(React.createElement(InputBox, null), document.getElementById('input'));
 	function showVerse(input) {
 	    $("#output").empty();
@@ -125,7 +145,12 @@
 	    ReactDOM.render(React.createElement(
 	        'div',
 	        null,
-	        verseComponents
+	        React.createElement(ToggleNotationsButton, null),
+	        React.createElement(
+	            'div',
+	            { id: 'verses' },
+	            verseComponents
+	        )
 	    ), document.getElementById('output'));
 	}
 
@@ -4314,11 +4339,17 @@
 	var alt = __webpack_require__(35);
 	var PassageActions = __webpack_require__(49);
 
+	var reg = /\<((sup)|(b))+[^><]*\>[^<>]+\<\/((sup)|(b))+\>/g;
+	var spans = /\<b[^><]*\>[^<>]*\<span[^><]*\>[^<>]*\<\/span\>[^<>]*\<\/b\>/g;
+
 	var PassageStore = function () {
 	    function PassageStore() {
 	        _classCallCheck(this, PassageStore);
 
 	        this.passages = [];
+	        this.withNotations = [];
+	        this.readerVersion = [];
+	        this.showNotations = true;
 
 	        this.bindListeners({
 	            handleInit: PassageActions.INITIALIZE_PASSAGE,
@@ -4331,6 +4362,8 @@
 	        key: 'handleClear',
 	        value: function handleClear() {
 	            this.passages = [];
+	            this.withNotations = [];
+	            this.readerVersion = [];
 	        }
 	    }, {
 	        key: 'handleInit',
@@ -4338,10 +4371,19 @@
 	            var passage = passageObj.passage;
 	            var index = passageObj.index;
 	            this.passages[index] = passage;
+	            this.withNotations[index] = passage;
+	            this.readerVersion[index] = passage.replace(spans, '').replace(reg, '');
 	        }
 	    }, {
 	        key: 'handleToggleNotations',
-	        value: function handleToggleNotations() {}
+	        value: function handleToggleNotations() {
+	            if (this.showNotations) {
+	                this.passages = this.readerVersion;
+	            } else {
+	                this.passages = this.withNotations;
+	            }
+	            this.showNotations = !this.showNotations;
+	        }
 	    }]);
 
 	    return PassageStore;

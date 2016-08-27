@@ -16,6 +16,9 @@ var InputBox = React.createClass({
                     if (event.key === 'Enter') {
                         showVerse(this.state.value);
                     }
+                    if (event.key === '9') {
+                        Actions.toggleNotations();
+                    }
                 },
     render: function() {
                 return (
@@ -29,6 +32,17 @@ var InputBox = React.createClass({
                     );
             }
 });
+var ToggleNotationsButton = React.createClass({
+    onClick: function() {
+                 Actions.toggleNotations();
+             },
+    render: function() {
+                return (
+                    <button type="button" onClick={this.onClick}>Toggle Notations</button>
+                    );
+            }
+
+});
 var Verses = React.createClass({
     getInitialState: function() {
                          return {passage: ''};
@@ -39,6 +53,7 @@ var Verses = React.createClass({
     componentDidMount: function() {
                            var that = this;
                            PassageStore.listen(function(state) {
+                               console.log("i heaar");
                             that.setState({passage: state.passages[that.props.index]});
                            });
                            $.ajax({
@@ -54,12 +69,14 @@ var Verses = React.createClass({
                        },
     render: function() {
                 return (
-                    <div className="verse">
-                    <div dangerouslySetInnerHTML={{__html: this.state.passage}}/>
-                    </div>
-                    );
+
+                        <div className="verse">
+                        <div dangerouslySetInnerHTML={{__html: this.state.passage}}/>
+                        </div>
+                       );
             }
 });
+
 ReactDOM.render(<InputBox/>, document.getElementById('input'));
 function showVerse(input) {
     $("#output").empty();
@@ -68,5 +85,5 @@ function showVerse(input) {
     let verseComponents = verses.map(function(vrs, i) {
         return <div key={i}><Verses url={"/verse/" + vrs} index={i}/></div>
     });
-    ReactDOM.render(<div>{verseComponents}</div>, document.getElementById('output'));
+    ReactDOM.render(<div><ToggleNotationsButton/><div id="verses">{verseComponents}</div></div>, document.getElementById('output'));
 }
