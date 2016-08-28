@@ -4362,7 +4362,7 @@
 	var alt = __webpack_require__(35);
 	var PassageActions = __webpack_require__(49);
 
-	var reg = /\<((sup)|(b))+[^><]*\>[^<>]+\<\/((sup)|(b))+\>/g;
+	var verseTags = /\<((sup)|(b))+[^><]*\>[^<>]+\<\/((sup)|(b))+\>/g;
 	var spans = /\<b[^><]*\>[^<>]*\<span[^><]*\>[^<>]*\<\/span\>[^<>]*\<\/b\>/g;
 
 	var PassageStore = function () {
@@ -4395,7 +4395,7 @@
 	            var index = passageObj.index;
 	            this.passages[index] = passage;
 	            this.withNotations[index] = passage;
-	            this.readerVersion[index] = passage.replace(spans, '').replace(reg, '');
+	            this.readerVersion[index] = passage.replace(spans, '').replace(verseTags, ' ').replace('  ', ' ').replace('\n ', '\n');
 	        }
 	    }, {
 	        key: 'handleToggleNotations',

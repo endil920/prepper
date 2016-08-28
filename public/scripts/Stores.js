@@ -1,7 +1,7 @@
 var alt = require('../../alt');
 var PassageActions = require('./Actions');
 
-let reg =/\<((sup)|(b))+[^><]*\>[^<>]+\<\/((sup)|(b))+\>/g;
+let verseTags =/\<((sup)|(b))+[^><]*\>[^<>]+\<\/((sup)|(b))+\>/g;
 let spans = /\<b[^><]*\>[^<>]*\<span[^><]*\>[^<>]*\<\/span\>[^<>]*\<\/b\>/g;
 
 class PassageStore {
@@ -29,7 +29,7 @@ class PassageStore {
         let index = passageObj.index;
         this.passages[index] = passage;
         this.withNotations[index] = passage;
-        this.readerVersion[index] = passage.replace(spans, '').replace(reg, '');
+        this.readerVersion[index] = passage.replace(spans, '').replace(verseTags, ' ').replace('  ', ' ').replace('\n ', '\n');
     }
     handleToggleNotations() {
         if (this.showNotations) {
