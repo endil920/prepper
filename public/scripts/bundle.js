@@ -72,6 +72,7 @@
 	            'div',
 	            null,
 	            React.createElement('textarea', {
+	                rows: '8',
 	                type: 'text',
 	                value: this.state.value,
 	                onChange: this.handleChange,
@@ -79,7 +80,7 @@
 	                onKeyPress: this.onKeyPress
 	            }),
 	            React.createElement('br', null),
-	            'Press Enter to Display Verse Text'
+	            'Press Enter to Display'
 	        );
 	    }
 	});

@@ -21,6 +21,7 @@ var InputBox = React.createClass({
                 return (
                     <div>
                     <textarea
+                    rows="8"
                     type="text"
                     value={this.state.value}
                     onChange={this.handleChange}
@@ -28,7 +29,7 @@ var InputBox = React.createClass({
                     onKeyPress={this.onKeyPress}
                     />
                     <br/>
-                    Press Enter to Display Verse Text
+                    Press Enter to Display 
                     </div>
                     );
             }
