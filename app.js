@@ -19,6 +19,8 @@ app.get('/verse/:query', function(req, res) {
     },
 
     function(err, response, body) {
+      if (!err)
+      {
         var body = JSON.parse(body);
         if (body['response'] != undefined 
             && body['response']['search'] != undefined 
@@ -39,6 +41,11 @@ app.get('/verse/:query', function(req, res) {
         }
 
         res.end(JSON.stringify(result));
+        }
+        else
+        {
+        res.end("could not reach bibles.org at this time");
+        }
     });
 
 });
