@@ -4,6 +4,14 @@ var PassageActions = require('./Actions');
 let verseTags =/\<((sup)|(b))+[^><]*\>[^<>]+\<\/((sup)|(b))+\>/g;
 let spans = /\<b[^><]*\>[^<>]*\<span[^><]*\>[^<>]*\<\/span\>[^<>]*\<\/b\>/g;
 
+//let titles=/\n.*\n/g;
+let parens=/\[\d*\]/g;
+
+let verseMarkers = /\[\d+\]/g;
+let footNoteMarkers = /\(\d+\)/g;
+let footNotes = /Footnotes.*/;
+let titles = /\n\n.*\n\n/;
+
 class PassageStore {
     constructor() {
         this.passages = [];
@@ -25,11 +33,14 @@ class PassageStore {
     }
 
     handleInit(passageObj) {
+        console.log("calle me maybe");
         let passage = passageObj.passage;
         let index = passageObj.index;
         this.passages[index] = passage;
         this.withNotations[index] = passage;
-        this.readerVersion[index] = passage.replace(spans, '').replace(verseTags, ' ').replace('  ', ' ').replace('\n ', '\n');
+        //this.readerVersion[index] = passage.replace(spans, '').replace(verseTags, ' ').replace('  ', ' ').replace('\n ', '\n');
+        //this.readerVersion[index] = passage.replace(titles, '').replace(parens, ' ').replace('  ', ' ').replace('\n ', '\n');
+        this.readerVersion[index] = passage.replace(verseMarkers, '').replace(footNoteMarkers, '').replace(titles, '').split("Footnotes")[0];
     }
     handleToggleNotations() {
         if (this.showNotations) {

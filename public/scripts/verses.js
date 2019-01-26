@@ -59,12 +59,14 @@ var Verses = React.createClass({
                          return {passage: ''};
                      },
     stripText: function() {
-                   this.state.data = this.state.data.replace(/\<sup.*\/sup\>/g, '');
+                   //this.state.data = this.state.data.replace(/\<sup.*\/sup\>/g, '');
+                   this.state.data = this.state.data.replace(/\[\d*\]/g,'').replace('/\n.*\n/g','');
                },
     componentDidMount: function() {
                            var that = this;
                            PassageStore.listen(function(state) {
-                               console.log("i heaar" + that.props.index);
+                               console.log("i do heaar" + that.props.index);
+                               console.log(that.state.data);
 
                             that.setState({passage: state.passages[that.props.index]});
                            });
