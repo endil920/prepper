@@ -119,12 +119,14 @@
 	        return { passage: '' };
 	    },
 	    stripText: function stripText() {
-	        this.state.data = this.state.data.replace(/\<sup.*\/sup\>/g, '');
+	        //this.state.data = this.state.data.replace(/\<sup.*\/sup\>/g, '');
+	        this.state.data = this.state.data.replace(/\[\d*\]/g, '').replace('/\n.*\n/g', '');
 	    },
 	    componentDidMount: function componentDidMount() {
 	        var that = this;
 	        PassageStore.listen(function (state) {
-	            console.log("i heaar" + that.props.index);
+	            console.log("i do heaar" + that.props.index);
+	            console.log(that.state.data);
 
 	            that.setState({ passage: state.passages[that.props.index] });
 	        });
@@ -4366,6 +4368,14 @@
 	var verseTags = /\<((sup)|(b))+[^><]*\>[^<>]+\<\/((sup)|(b))+\>/g;
 	var spans = /\<b[^><]*\>[^<>]*\<span[^><]*\>[^<>]*\<\/span\>[^<>]*\<\/b\>/g;
 
+	//let titles=/\n.*\n/g;
+	var parens = /\[\d*\]/g;
+
+	var verseMarkers = /\[\d+\]/g;
+	var footNoteMarkers = /\(\d+\)/g;
+	var footNotes = /Footnotes.*/;
+	var titles = /\n\n.*\n\n/;
+
 	var PassageStore = function () {
 	    function PassageStore() {
 	        _classCallCheck(this, PassageStore);
@@ -4392,11 +4402,14 @@
 	    }, {
 	        key: 'handleInit',
 	        value: function handleInit(passageObj) {
+	            console.log("calle me maybe");
 	            var passage = passageObj.passage;
 	            var index = passageObj.index;
 	            this.passages[index] = passage;
 	            this.withNotations[index] = passage;
-	            this.readerVersion[index] = passage.replace(spans, '').replace(verseTags, ' ').replace('  ', ' ').replace('\n ', '\n');
+	            //this.readerVersion[index] = passage.replace(spans, '').replace(verseTags, ' ').replace('  ', ' ').replace('\n ', '\n');
+	            //this.readerVersion[index] = passage.replace(titles, '').replace(parens, ' ').replace('  ', ' ').replace('\n ', '\n');
+	            this.readerVersion[index] = passage.replace(verseMarkers, '').replace(footNoteMarkers, '').replace(titles, '').split("Footnotes")[0];
 	        }
 	    }, {
 	        key: 'handleToggleNotations',
