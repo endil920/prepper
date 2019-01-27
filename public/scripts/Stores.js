@@ -10,7 +10,7 @@ let parens=/\[\d*\]/g;
 let verseMarkers = /\[\d+\]/g;
 let footNoteMarkers = /\(\d+\)/g;
 let footNotes = /Footnotes.*/;
-let titles = /\n\n.*\n\n/g;
+let titles = /\n\n.*\n\n/;
 
 class PassageStore {
     constructor() {
@@ -40,7 +40,7 @@ class PassageStore {
         this.withNotations[index] = passage;
         //this.readerVersion[index] = passage.replace(spans, '').replace(verseTags, ' ').replace('  ', ' ').replace('\n ', '\n');
         //this.readerVersion[index] = passage.replace(titles, '').replace(parens, ' ').replace('  ', ' ').replace('\n ', '\n');
-        this.readerVersion[index] = passage.replace(verseMarkers, '').replace(footNoteMarkers, '').replace(titles, '').split("Footnotes")[0];
+        this.readerVersion[index] = passage.replace(verseMarkers, '').replace(footNoteMarkers, '').split("Footnotes")[0].replace(titles, '');
     }
     handleToggleNotations() {
         if (this.showNotations) {

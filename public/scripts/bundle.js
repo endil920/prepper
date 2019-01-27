@@ -4374,7 +4374,7 @@
 	var verseMarkers = /\[\d+\]/g;
 	var footNoteMarkers = /\(\d+\)/g;
 	var footNotes = /Footnotes.*/;
-	var titles = /\n\n.*\n\n/g;
+	var titles = /\n\n.*\n\n/;
 
 	var PassageStore = function () {
 	    function PassageStore() {
@@ -4409,7 +4409,7 @@
 	            this.withNotations[index] = passage;
 	            //this.readerVersion[index] = passage.replace(spans, '').replace(verseTags, ' ').replace('  ', ' ').replace('\n ', '\n');
 	            //this.readerVersion[index] = passage.replace(titles, '').replace(parens, ' ').replace('  ', ' ').replace('\n ', '\n');
-	            this.readerVersion[index] = passage.replace(verseMarkers, '').replace(footNoteMarkers, '').replace(titles, '').split("Footnotes")[0];
+	            this.readerVersion[index] = passage.replace(verseMarkers, '').replace(footNoteMarkers, '').split("Footnotes")[0].replace(titles, '');
 	        }
 	    }, {
 	        key: 'handleToggleNotations',

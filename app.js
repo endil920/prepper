@@ -5,7 +5,7 @@ var path = require('path');
 var baseUrl = 'https://bibles.org/v2/eng-ESV/passages.js?q[]=';
 var esvBaseUrl = 'https://api.esv.org/v3/passage/text?q=';
 var token = process.env.token;
-var esvToken = process.env.esvToken;
+var esvToken = process.env.esvToken || "8c4643c643d6a131e543303d7461ba34106f301a";
 
 app.use(express.static('public'));
 app.get('/', express.static(path.join(__dirname, 'public')));
