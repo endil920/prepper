@@ -4374,7 +4374,7 @@
 	var verseMarkers = /\[\d+\]/g;
 	var footNoteMarkers = /\(\d+\)/g;
 	var footNotes = /Footnotes.*/;
-	var titles = /\n\n.*\n\n/;
+	var titles = /\n\n.*\n\n/g;
 
 	var PassageStore = function () {
 	    function PassageStore() {

@@ -10,7 +10,7 @@ let parens=/\[\d*\]/g;
 let verseMarkers = /\[\d+\]/g;
 let footNoteMarkers = /\(\d+\)/g;
 let footNotes = /Footnotes.*/;
-let titles = /\n\n.*\n\n/;
+let titles = /\n\n.*\n\n/g;
 
 class PassageStore {
     constructor() {
