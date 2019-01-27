@@ -54,7 +54,7 @@
 	    displayName: 'InputBox',
 
 	    getInitialState: function getInitialState() {
-	        return { value: "Please input verses/passages here. Separate by comma" };
+	        return { value: "Please input verses/passages here. Separate by comma - e.g. rev15:4,jn17:1,gen1" };
 	    },
 	    handleChange: function handleChange(event) {
 	        this.setState({ value: event.target.value });
