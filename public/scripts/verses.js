@@ -97,7 +97,7 @@ function showVerse(input) {
     Actions.clear();
     let verses = input.split(/[,\n;]+/);
     let verseComponents = verses.map(function(vrs, i) {
-        return <div key={i}><Verses url={"/verse/" + vrs} index={i}/></div>
+        return <div key={i}><Verses url={"/verse/" + vrs} index={i}/><br /></div>
     });
     ReactDOM.render(<div><ToggleNotationsButton/>
             <CopyButton/>

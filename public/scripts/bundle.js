@@ -159,7 +159,8 @@
 	        return React.createElement(
 	            'div',
 	            { key: i },
-	            React.createElement(Verses, { url: "/verse/" + vrs, index: i })
+	            React.createElement(Verses, { url: "/verse/" + vrs, index: i }),
+	            React.createElement('br', null)
 	        );
 	    });
 	    ReactDOM.render(React.createElement(
