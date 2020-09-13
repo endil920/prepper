@@ -53,6 +53,17 @@ var CopyButton = React.createClass({
             }
 
 });
+var ClearButton = React.createClass({
+    onClick: function() {
+        Actions.clear();
+    },
+    render: function() {
+                return (
+                    <button className="button" onClick={this.onClick}>Clear</button>
+                    );
+    }
+});
+
 
 var Verses = React.createClass({
     getInitialState: function() {
@@ -65,7 +76,6 @@ var Verses = React.createClass({
     componentDidMount: function() {
                            var that = this;
                            PassageStore.listen(function(state) {
-                               console.log("i do heaar" + that.props.index);
                                console.log(that.state.data);
 
                             that.setState({passage: state.passages[that.props.index]});
@@ -91,16 +101,69 @@ var Verses = React.createClass({
             }
 });
 
+var quickMatcher = function(regex) {
+    return function(inputPassage) {
+        let matching = inputPassage.match(regex);
+        if (matching == null) return matching;
+        return matching[0];
+    }
+}
+
+var getBook = quickMatcher(/[a-zA-Z]+/);
+var getChappy = quickMatcher(/[^:a-zA-Z][\d]+/);
+
+var parseVerses = function(inputText) {
+    console.log('parse verses function called');
+    let result = [];
+    let initSplit = inputText.split(/[,\n;]+/);
+    let curBook = getBook(initSplit[0]);
+    let curChappy = getChappy(initSplit[0]);
+    console.log("input length: " + initSplit.length);
+    console.log("last input: " + initSplit[initSplit.length - 1]);
+    for (var i in initSplit) {
+        let pass = initSplit[i];
+        if (pass.length == 0) {
+            console.log("passage is empty. Continuing.");
+            continue;
+        }
+
+        let tmpChappy = getChappy(pass);
+        if (tmpChappy != null) {
+            console.log("chappy is " + curChappy);
+            curChappy = tmpChappy;
+        } else {
+            pass = curChappy + ":" + pass;
+            console.log("passage is " + pass + " now");
+        }
+
+        let tmpBook = getBook(pass);
+        if (tmpBook != null) {
+            curBook = tmpBook; 
+            // just add the passage as-is
+            console.log("will process passage" + pass);
+        } else {
+            // concatenate the passage together and add it
+            console.log("will process passage " + curBook + pass);
+            pass = curBook + pass;
+        }
+
+        result.push(pass);
+    }
+    return result;
+}
+
 ReactDOM.render(<InputBox/>, document.getElementById('input'));
 function showVerse(input) {
     $("#outputContainer").empty();
     Actions.clear();
-    let verses = input.split(/[,\n;]+/);
+    // let verses = input.split(/[,\n;]+/);
+    let verses = parseVerses(input);
     let verseComponents = verses.map(function(vrs, i) {
         return <div key={i}><Verses url={"/verse/" + vrs} index={i}/><br /></div>
     });
     ReactDOM.render(<div><ToggleNotationsButton/>
             <CopyButton/>
+            <ClearButton/>
             <div id="output">
             <div id="verses">{verseComponents}</div></div></div>, document.getElementById('outputContainer'));
     new Clipboard('.cbutton');

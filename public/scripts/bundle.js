@@ -111,6 +111,20 @@
 	    }
 
 	});
+	var ClearButton = React.createClass({
+	    displayName: 'ClearButton',
+
+	    onClick: function onClick() {
+	        Actions.clear();
+	    },
+	    render: function render() {
+	        return React.createElement(
+	            'button',
+	            { className: 'button', onClick: this.onClick },
+	            'Clear'
+	        );
+	    }
+	});
 
 	var Verses = React.createClass({
 	    displayName: 'Verses',
@@ -125,7 +139,6 @@
 	    componentDidMount: function componentDidMount() {
 	        var that = this;
 	        PassageStore.listen(function (state) {
-	            console.log("i do heaar" + that.props.index);
 	            console.log(that.state.data);
 
 	            that.setState({ passage: state.passages[that.props.index] });
@@ -150,11 +163,63 @@
 	    }
 	});
 
+	var quickMatcher = function quickMatcher(regex) {
+	    return function (inputPassage) {
+	        var matching = inputPassage.match(regex);
+	        if (matching == null) return matching;
+	        return matching[0];
+	    };
+	};
+
+	var getBook = quickMatcher(/[a-zA-Z]+/);
+	var getChappy = quickMatcher(/[^:a-zA-Z][\d]+/);
+
+	var parseVerses = function parseVerses(inputText) {
+	    console.log('parse verses function called');
+	    var result = [];
+	    var initSplit = inputText.split(/[,\n;]+/);
+	    var curBook = getBook(initSplit[0]);
+	    var curChappy = getChappy(initSplit[0]);
+	    console.log("input length: " + initSplit.length);
+	    console.log("last input: " + initSplit[initSplit.length - 1]);
+	    for (var i in initSplit) {
+	        var pass = initSplit[i];
+	        if (pass.length == 0) {
+	            console.log("passage is empty. Continuing.");
+	            continue;
+	        }
+
+	        var tmpChappy = getChappy(pass);
+	        if (tmpChappy != null) {
+	            console.log("chappy is " + curChappy);
+	            curChappy = tmpChappy;
+	        } else {
+	            pass = curChappy + ":" + pass;
+	            console.log("passage is " + pass + " now");
+	        }
+
+	        var tmpBook = getBook(pass);
+	        if (tmpBook != null) {
+	            curBook = tmpBook;
+	            // just add the passage as-is
+	            console.log("will process passage" + pass);
+	        } else {
+	            // concatenate the passage together and add it
+	            console.log("will process passage " + curBook + pass);
+	            pass = curBook + pass;
+	        }
+
+	        result.push(pass);
+	    }
+	    return result;
+	};
+
 	ReactDOM.render(React.createElement(InputBox, null), document.getElementById('input'));
 	function showVerse(input) {
 	    $("#outputContainer").empty();
 	    Actions.clear();
-	    var verses = input.split(/[,\n;]+/);
+	    // let verses = input.split(/[,\n;]+/);
+	    var verses = parseVerses(input);
 	    var verseComponents = verses.map(function (vrs, i) {
 	        return React.createElement(
 	            'div',
@@ -168,6 +233,7 @@
 	        null,
 	        React.createElement(ToggleNotationsButton, null),
 	        React.createElement(CopyButton, null),
+	        React.createElement(ClearButton, null),
 	        React.createElement(
 	            'div',
 	            { id: 'output' },
@@ -4410,7 +4476,7 @@
 	            this.withNotations[index] = passage;
 	            //this.readerVersion[index] = passage.replace(spans, '').replace(verseTags, ' ').replace('  ', ' ').replace('\n ', '\n');
 	            //this.readerVersion[index] = passage.replace(titles, '').replace(parens, ' ').replace('  ', ' ').replace('\n ', '\n');
-	            this.readerVersion[index] = passage.replace(verseMarkers, '').replace(footNoteMarkers, '').split("Footnotes")[0].replace(titles, '');
+	            this.readerVersion[index] = passage.replace(verseMarkers, '').replace(footNoteMarkers, '').replace('(ESV)', '').split("Footnotes")[0].replace(titles, '');
 	        }
 	    }, {
 	        key: 'handleToggleNotations',

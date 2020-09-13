@@ -40,7 +40,11 @@ class PassageStore {
         this.withNotations[index] = passage;
         //this.readerVersion[index] = passage.replace(spans, '').replace(verseTags, ' ').replace('  ', ' ').replace('\n ', '\n');
         //this.readerVersion[index] = passage.replace(titles, '').replace(parens, ' ').replace('  ', ' ').replace('\n ', '\n');
-        this.readerVersion[index] = passage.replace(verseMarkers, '').replace(footNoteMarkers, '').split("Footnotes")[0].replace(titles, '');
+        this.readerVersion[index] = passage
+        .replace(verseMarkers, '')
+        .replace(footNoteMarkers, '')
+        .replace('(ESV)','')
+        .split("Footnotes")[0].replace(titles, '');
     }
     handleToggleNotations() {
         if (this.showNotations) {
